@@ -84,7 +84,7 @@ let delay,delayFeedback,delayDry,delayWet,delayOut,reverbOut;
 let matrizEfectos=[[7,0.2,20],[0.6,0,1],[8,0.2,15],[0.03,0.01,0.1],[0.3,0.05,1],[0.4,0.05,0.8],[0.3,0,1],[0.4,0,1],[0,-2,2],[0.3,0,1],[0.3,0,0.9],[0.8,0,1]];
 //                  HzTremolo/intTremolo/HzVibrato/   IntVibrato  /  msDelay  /feedBack delay /IntDelay /IntReverb/intPitch/ msPitch / IntDist / CutDist
 // let boolFX=[false,false,false,false,false,false],selecRev=1,indiceFX=-1;
-let boolFX=[false,false,false,false,false,true],selecRev=1,indiceFX=-1;
+let boolFX=[false,false,false,false,false,false],selecRev=1,indiceFX=-1;
 
 for(i=0;i<cantSources;i++){
     sources[i]=audioCtx.createBufferSource();
@@ -651,11 +651,20 @@ function clickAncho(){
 function clickEcu(){
   let rect = canvasEcu.getBoundingClientRect();
 
-  mouseX=event.clientX - rect.left;
-  mouseY=event.clientY - rect.top;
+  // mouseX=event.clientX - rect.left;
+  // mouseY=event.clientY - rect.top;
+
+  if(!esTactil){
+    mouseX = event.clientX - rect.left;
+    mouseY = event.clientY - rect.top;
+  }else{
+    mouseX = event.touches[0].clientX - rect.left;
+    mouseY = event.touches[0].clientY - rect.top;
+  }
 
   for(i=0;i<cantidadFiltros;i++){
-        if(mouseX>=Xfiltros[i]-6&&mouseX<=Xfiltros[i]+6&&mouseY>=Yfiltros[i]-6&&mouseY<=Yfiltros[i]+6&&indiceEcu==null)indiceEcu=i;
+        // if(mouseX>=Xfiltros[i]-6&&mouseX<=Xfiltros[i]+6&&mouseY>=Yfiltros[i]-6&&mouseY<=Yfiltros[i]+6&&indiceEcu==null)indiceEcu=i;;
+        if(mouseX>=Xfiltros[i]-16&&mouseX<=Xfiltros[i]+16&&mouseY>=Yfiltros[i]-16&&mouseY<=Yfiltros[i]+16&&indiceEcu==null)indiceEcu=i;;
   }
 
   if(indiceEcu==null)indiceEcu=999;
@@ -804,19 +813,27 @@ document.querySelector("#refrescar").addEventListener("mousedown",()=>{
 
 
 const esTactil = window.matchMedia('(pointer: coarse)').matches;
-let notaClick;
+let notasClick=[];
 let patronPiano=[0,1,2,1,0,0,1,2,1,2,1,0,0,1,2,1,0,0,1,2,1,2,1,0,0];
 
-function clickear(){
+function clickear(event){
     
   let rect = canvasTeclado.getBoundingClientRect();
   let mouseX,mouseY;
+
+  let dedo=0;
+  if(esTactil){
+    for (let touch of event.changedTouches) {
+      dedo=touch.identifier;
+    }
+  }
+
   if(!esTactil){
     mouseX = event.clientX - rect.left;
     mouseY = event.clientY - rect.top;
   }else{
-    mouseX = event.touches[0].clientX - rect.left;
-    mouseY = event.touches[0].clientY - rect.top;
+    mouseX = event.touches[dedo].clientX - rect.left;
+    mouseY = event.touches[dedo].clientY - rect.top;
   }
 
   let nota;
@@ -849,13 +866,23 @@ function clickear(){
 
   reproducir(nota);
 
-  notaClick=nota;
+  notasClick[dedo]=nota;
 
   muestreo();
 
 }
 
-function detenerClick(){
+function detenerClick(event){
+
+  let dedo=0;
+  if(esTactil){
+    for (let touch of event.changedTouches) {
+      dedo=touch.identifier;
+    }
+  }
+
+  let notaClick=notasClick[dedo]
+
   let srcAux=ultimoSource[notaClick];
 
   apretando[notaClick]=false;

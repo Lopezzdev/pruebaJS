@@ -45,11 +45,21 @@ document.addEventListener("mouseup",()=>{
 });
 
 document.querySelector("#botones").addEventListener("mousedown",crearArrays);
+document.querySelector("#efectos").addEventListener("mouseup",crearArrays);
 
-let auxToque=false;
-document.querySelector("#teclado").addEventListener("touchstart",()=>{document.body.style.overflow = 'hidden';auxToque=true;})
-document.addEventListener("touchstart",()=>{if(!auxToque)document.body.style.overflow = 'scroll';})
-document.addEventListener("touchend",()=>{document.body.style.overflow = 'scroll';auxToque=false;})
+// let auxToque=false;
+// document.querySelector("#teclado").addEventListener("touchstart",()=>{document.body.style.overflow = 'hidden';auxToque=true;})
+
+document.querySelector("#teclado").addEventListener('touchmove', function (event) {
+  event.preventDefault(); // evita desplazamiento
+}, { passive: false });
+document.querySelector("#ecu").addEventListener('touchmove', function (event) {
+  event.preventDefault(); // evita desplazamiento
+}, { passive: false });
+
+
+// document.addEventListener("touchstart",()=>{if(!auxToque)document.body.style.overflow = 'scroll';})
+// document.addEventListener("touchend",()=>{document.body.style.overflow = 'scroll';auxToque=false;})
 
 document.querySelector("#botAmp1").addEventListener("mousedown",()=>{
 
@@ -215,15 +225,6 @@ document.querySelector("#ancho").addEventListener("mouseup",()=>{
   document.querySelector("#ancho").removeEventListener("mousemove",clickAncho);
 });
 
-document.querySelector("#ecu").addEventListener("mousedown",()=>{
-  indiceEcu=null;
-  document.querySelector("#ecu").addEventListener("mousemove",clickEcu);
-})
-document.querySelector("#ecu").addEventListener("mouseup",()=>{
-  document.querySelector("#ecu").removeEventListener("mousemove",clickEcu);
-  indiceEcu=null;
-})
-
 document.querySelector("#efectos").addEventListener("mousedown",()=>{
   clickFX();
   document.querySelector("#efectos").addEventListener("mousemove",clickFX);
@@ -233,13 +234,31 @@ document.querySelector("#efectos").addEventListener("mouseup",()=>{
   indiceFX=-1;triggerFX=false;
 })
 
+document.querySelector("#ecu").addEventListener("mousedown",()=>{
+  indiceEcu=null;
+  document.querySelector("#ecu").addEventListener("mousemove",clickEcu);
+})
+document.querySelector("#ecu").addEventListener("mouseup",()=>{
+  document.querySelector("#ecu").removeEventListener("mousemove",clickEcu);
+  indiceEcu=null;
+})
+
+document.querySelector("#ecu").addEventListener("touchstart",()=>{
+  indiceEcu=null;
+  document.querySelector("#ecu").addEventListener("touchmove",clickEcu);
+})
+document.querySelector("#ecu").addEventListener("touchend",()=>{
+  document.querySelector("#ecu").removeEventListener("touchmove",clickEcu);
+  indiceEcu=null;
+})
+
 document.querySelector("#ecu").addEventListener("dblclick",()=>{
     let rect = canvasEcu.getBoundingClientRect();
 
     mouseX = event.clientX - rect.left;
     mouseY = event.clientY - rect.top;
 
-    for(i=0;i<cantidadFiltros;i++)if(mouseX>=Xfiltros[i]-6&&mouseX<=Xfiltros[i]+6&&mouseY>=Yfiltros[i]-6&&mouseY<=Yfiltros[i]+6){
+    for(i=0;i<cantidadFiltros;i++)if(mouseX>=Xfiltros[i]-16&&mouseX<=Xfiltros[i]+16&&mouseY>=Yfiltros[i]-16&&mouseY<=Yfiltros[i]+16){
         boolFiltros[i]=!boolFiltros[i];
     }
     muestreoEcu();
